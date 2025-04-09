@@ -51,4 +51,15 @@ class BoundingBox
         return this.left > other.left && this.right < other.right &&
                 this.top < other.top && this.bottom > other.bottom;
     }
+
+    public void move(int dx, int dy)
+    {
+        left += dx;
+        right += dx;
+        top += dy;
+        bottom += dy;
+        for (Point p : corners) {
+            p.translate(dx, dy);
+        }
+    }
 }

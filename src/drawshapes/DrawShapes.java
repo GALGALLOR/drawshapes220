@@ -38,6 +38,7 @@ public class DrawShapes extends JFrame
     private ShapeType shapeType = ShapeType.SQUARE;
     private Color color = Color.RED;
     private Point startDrag;
+    private int distance = 20;
 
 
     public DrawShapes(int width, int height)
@@ -313,7 +314,27 @@ public class DrawShapes extends JFrame
                 // TODO: implement this method if you need it
             }
             public void keyTyped(KeyEvent e) {
-                // TODO: implement this method if you need it
+                char k = e.getKeyChar();
+                
+                
+                if (k == 'w') {
+                    scene.moveSelected(0, -distance);
+                }
+                if (k == 'a') {
+                    scene.moveSelected(-distance, 0);
+                }
+                if (k == 's') {
+                    scene.moveSelected(0, distance);
+                }
+                if (k == 'd') {
+                    scene.moveSelected(distance, 0);
+                }
+
+                if (k == 'p') {
+                    for (IShape s : scene) if (s.isSelected()) s.scaleUp();
+                }
+
+                repaint();
             }
         });
     }

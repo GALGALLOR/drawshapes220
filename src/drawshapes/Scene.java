@@ -145,5 +145,12 @@ public class Scene implements Iterable<IShape>
         }
         return shapeText;
     }
+
+    public void moveSelected(int dx, int dy) 
+    {
+        for (IShape s : shapeList) {
+            if (s.isSelected()) s.move(dx, dy);
+        }
+    }
     
 }

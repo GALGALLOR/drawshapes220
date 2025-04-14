@@ -110,4 +110,5 @@ public abstract class AbstractShape implements IShape
         //delete bounding box
         //delete anchorpoint
     }
+
 }

@@ -33,7 +33,7 @@ public class Circle extends AbstractShape
                 this.getAnchorPoint().x, 
                 this.getAnchorPoint().y,
                 this.diameter,
-                colorToString(this.getColor()),
+                Util.colorToString(getColor()),
                 this.isSelected());
     }
 
@@ -41,6 +41,16 @@ public class Circle extends AbstractShape
     public void setAnchorPoint(Point p) {
         // TODO: move bounding box
         this.anchorPoint = p;
+    }
+    @Override
+    public void scaleUp(){
+        diameter = (int) (diameter * 1.25);
+        setBoundingBox(anchorPoint.x-diameter/2, anchorPoint.x+diameter/2, anchorPoint.y-diameter/2, anchorPoint.y+diameter/2);
+    }
+    @Override
+    public void scaleDown(){
+        diameter = (int) (diameter * 0.75);
+        setBoundingBox(anchorPoint.x-diameter/2, anchorPoint.x+diameter/2, anchorPoint.y-diameter/2, anchorPoint.y+diameter/2);
     }
 
 }

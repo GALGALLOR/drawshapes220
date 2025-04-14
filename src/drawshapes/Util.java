@@ -20,6 +20,8 @@ public class Util
             return "RED";
         } else if (color == Color.BLUE) {
             return "BLUE";
+        } else if (color == Color.GREEN) {
+            return "GREEN";
         }
         throw new UnsupportedOperationException("Unexpected color: "+color);
     }
@@ -29,6 +31,8 @@ public class Util
             return Color.RED;
         } else if (color.equals("BLUE")) {
             return Color.BLUE;
+        } else if (color.equals("GREEN")) {
+            return Color.GREEN;
         }
         throw new UnsupportedOperationException("Unexpected color: "+color);
     }

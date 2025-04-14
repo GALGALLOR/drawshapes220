@@ -16,6 +16,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 
 import javax.swing.JFileChooser;
@@ -23,6 +24,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 
 @SuppressWarnings("serial")
 public class DrawShapes extends JFrame
@@ -38,6 +40,7 @@ public class DrawShapes extends JFrame
     private ShapeType shapeType = ShapeType.SQUARE;
     private Color color = Color.RED;
     private Point startDrag;
+    private int distance = 30;
 
 
     public DrawShapes(int width, int height)
@@ -162,13 +165,13 @@ public class DrawShapes extends JFrame
         // file menu
         JMenu fileMenu=new JMenu("File");
         menuBar.add(fileMenu);
+        
         // load
         JMenuItem loadItem = new JMenuItem("Load");
         fileMenu.add(loadItem);
         loadItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // TODO Auto-generated method stub
                 System.out.println(e.getActionCommand());
                 JFileChooser jfc = new JFileChooser(".");
 
@@ -177,9 +180,16 @@ public class DrawShapes extends JFrame
                 if (returnValue == JFileChooser.APPROVE_OPTION) {
                     File selectedFile = jfc.getSelectedFile();
                     System.out.println("load from " +selectedFile.getAbsolutePath());
-                    //TODO: load scene from file
+                    try{
+                        scene.loadFromFile(selectedFile);
+                        repaint();
+                    }
+                    catch(Exception ex){
+                        JOptionPane.showMessageDialog(null, ex);
+                    }
                     
                 }
+                
             }
         });
         // save
@@ -188,7 +198,6 @@ public class DrawShapes extends JFrame
         saveItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // TODO Auto-generated method stub
                 System.out.println(e.getActionCommand());
                 JFileChooser jfc = new JFileChooser(".");
 
@@ -198,7 +207,14 @@ public class DrawShapes extends JFrame
                 if (returnValue == JFileChooser.APPROVE_OPTION) {
                     File selectedFile = jfc.getSelectedFile();
                     System.out.println("save to " +selectedFile.getAbsolutePath());
-                    //TODO: save scene to file
+                    String text = scene.toString();
+                    try(PrintWriter out = new PrintWriter(selectedFile)){
+                        out.println(text);
+                    }
+                    catch(Exception ex){
+                        JOptionPane.showMessageDialog(null,ex);
+                    }
+
                     
                 }
             }
@@ -243,6 +259,17 @@ public class DrawShapes extends JFrame
                 color = Color.BLUE;
             }
         });
+        // green color
+        JMenuItem greenColorItem = new JMenuItem ("Green");
+        colorMenu.add(greenColorItem);
+        greenColorItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String text=e.getActionCommand();
+                System.out.println(text);
+                // change the color instance variable to green
+                color = Color.GREEN;
+            }
+        });
         
         // shape menu
         JMenu shapeMenu = new JMenu("Shape");
@@ -267,6 +294,16 @@ public class DrawShapes extends JFrame
             public void actionPerformed(ActionEvent e) {
                 System.out.println("Circle");
                 shapeType = ShapeType.CIRCLE;
+            }
+        });
+        // rECTANGLE
+        JMenuItem rectangleItem = new JMenuItem("Rectangle");
+        shapeMenu.add(rectangleItem);
+        rectangleItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("Rectangle");
+                shapeType = ShapeType.RECTANGLE;
             }
         });
         
@@ -294,6 +331,47 @@ public class DrawShapes extends JFrame
                 System.out.println(text);
             }
         });
+
+        // Change Color
+        JMenu changeColor=new JMenu("Change Color");
+        menuBar.add(changeColor);
+        
+        // to red
+        JMenuItem toRed=new JMenuItem("toRed");
+        changeColor.add(toRed);
+        toRed.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String text=e.getActionCommand();
+                System.out.println(text);
+                scene.setColorSelected(Color.RED);
+                repaint();
+            }
+        });
+        
+        // to Blue
+        JMenuItem toBlue=new JMenuItem("to Blue");
+        changeColor.add(toBlue);
+        toBlue.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String text=e.getActionCommand();
+                System.out.println(text);
+                scene.setColorSelected(Color.BLUE);
+                repaint();
+            }
+        });
+
+        // to Green
+        JMenuItem toGreen=new JMenuItem("to Green");
+        changeColor.add(toGreen);
+        toGreen.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String text=e.getActionCommand();
+                System.out.println(text);
+                scene.setColorSelected(Color.GREEN);
+                repaint();
+            }
+        });
+        
         
 
         // set the menu bar for this frame
@@ -311,9 +389,36 @@ public class DrawShapes extends JFrame
             }
             public void keyReleased(KeyEvent e){
                 // TODO: implement this method if you need it
+                char k =e.getKeyChar();
+                
+
             }
             public void keyTyped(KeyEvent e) {
-                // TODO: implement this method if you need it
+                e.getKeyCode();
+                char k =e.getKeyChar();
+                if(k=='w'){
+                    scene.moveSelected(0, -distance);
+                }
+                if(k=='a'){
+                    scene.moveSelected(-distance, 0);
+                }
+                if(k=='s'){
+                    scene.moveSelected(0, distance);
+                }
+                if(k=='d'){
+                    scene.moveSelected(distance, 0);
+                }
+                if(k=='+'){
+                    scene.scaleUpSelected();
+                }
+                if(k=='-'){
+                    scene.scaleDownSelected();
+                }
+                if(k=='r'){
+                    scene.deleteSelected();
+                }
+                repaint();
+
             }
         });
     }

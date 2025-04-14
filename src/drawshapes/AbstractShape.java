@@ -91,12 +91,23 @@ public abstract class AbstractShape implements IShape
         return this.anchorPoint;
     }
     
-    static String colorToString(Color color) {
-        if (color == Color.RED) {
-            return "RED";
-        } else if (color == Color.BLUE) {
-            return "BLUE";
-        }
-        throw new UnsupportedOperationException("Unexpected color: "+color);
+    //Add Move
+    public void move(int dx, int dy){
+        anchorPoint.translate(dx, dy);
+        boundingBox.move(dx,dy);
+ 
+    }
+    @Override
+    public void scaleUp(){
+        throw new UnsupportedOperationException("not implemented yet");
+    }
+    @Override
+    public void scaleDown(){
+        throw new UnsupportedOperationException("not implemented yet");
+    }
+    
+    public void delete(){
+        //delete bounding box
+        //delete anchorpoint
     }
 }

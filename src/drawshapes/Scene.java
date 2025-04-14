@@ -2,12 +2,19 @@ package drawshapes;
 
 
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Scanner;
+
+import drawshapes.DrawShapes.ShapeType;
 
 /**
  * A scene of shapes.  Uses the Model-View-Controller (MVC) design pattern,
@@ -128,6 +135,9 @@ public class Scene implements Iterable<IShape>
     public void addShape(IShape s) {
         shapeList.add(s);
     }
+    public void removeShape(IShape s) {
+        shapeList.remove(s);
+    }
     
     /**
      * Remove a list of shapes from the given scene.
@@ -144,6 +154,95 @@ public class Scene implements Iterable<IShape>
             shapeText += s.toString() + "\n";
         }
         return shapeText;
+    }
+    public void moveSelected(int dx,int dy){
+        for(IShape s: shapeList){
+            if(s.isSelected()){
+                s.move(dx,dy);
+            }
+        }
+    }
+    public void scaleUpSelected(){
+        for(IShape s: shapeList){
+            if(s.isSelected()){
+                s.scaleUp();
+            }
+        }
+    }
+    public void scaleDownSelected(){
+        for(IShape s: shapeList){
+            if(s.isSelected()){
+                s.scaleDown();
+            }
+        }
+    }
+    public void setColorSelected(Color color){
+        for(IShape s: shapeList){
+            if(s.isSelected()){
+                s.setColor(color);
+            }
+        }
+    }
+    public void deleteSelected() {
+        Iterator<IShape> iterator = shapeList.iterator();
+        while (iterator.hasNext()) {
+            IShape shape = iterator.next();
+            if (shape.isSelected()) {
+                iterator.remove(); // safe removal during iteration
+            }
+        }
+    }
+
+    public void loadFromFile(File selectedFile) throws IOException {
+        shapeList.clear();
+        Scanner scan = new Scanner(new FileInputStream(selectedFile));
+        while(scan.hasNext()){
+            String shapeType = scan.next();
+            if (shapeType.equalsIgnoreCase(ShapeType.SQUARE.toString())){
+                int x=scan.nextInt();
+                int y=scan.nextInt();
+                int side = scan.nextInt();
+                String colorStr = scan.next();
+                boolean selected = scan.nextBoolean();
+
+                Color color = Util.stringToColor(colorStr);
+                Square sq = new Square(color,x,y,side);
+                sq.setSelected(selected);
+                addShape(sq);
+            }
+            else if (shapeType.equalsIgnoreCase(ShapeType.RECTANGLE.toString())){
+                int x=scan.nextInt();
+                int y=scan.nextInt();
+                int width = scan.nextInt();
+                int height = scan.nextInt();
+                String colorStr = scan.next();
+                boolean selected = scan.nextBoolean();
+
+                Color color = Util.stringToColor(colorStr);
+                //Square sq = new Square(color,x,y,side);
+                Point center = new Point(x, y);
+                Rectangle rect = new Rectangle(center, width,height, color);
+                rect.setSelected(selected);
+                addShape(rect);
+            }
+            else if (shapeType.equalsIgnoreCase(ShapeType.CIRCLE.toString())){
+                int x=scan.nextInt();
+                int y=scan.nextInt();
+                int diameter = scan.nextInt();
+                String colorStr = scan.next();
+                boolean selected = scan.nextBoolean();
+
+                Color color = Util.stringToColor(colorStr);
+                Point center = new Point(x, y);
+                //possible error
+                Circle cc = new Circle(color, center, diameter);
+                cc.setSelected(selected);
+                addShape(cc);
+            }
+            else{
+                throw new UnsupportedOperationException("Unknown shape "+shapeType);
+            }
+        }
     }
     
 }

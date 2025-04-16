@@ -88,4 +88,5 @@ public interface IShape
     public void move(int dx, int dy);
     public void scaleUp();
     public void scaleDown();
+    public IShape copy();
 }

@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.Stack;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -41,12 +42,14 @@ public class DrawShapes extends JFrame
     private Color color = Color.RED;
     private Point startDrag;
     private int distance = 30;
+    private Stack<Scene> undoStack = new Stack<>();
 
 
     public DrawShapes(int width, int height)
     {
         setTitle("Draw Shapes!");
         scene=new Scene();
+        undoStack.push(scene);
         
         // create our canvas, add to this frame's content pane
         shapePanel = new DrawShapesPanel(width,height,scene);
@@ -69,6 +72,21 @@ public class DrawShapes extends JFrame
             }
         });
     }
+    private void push(){
+        undoStack.push(scene.copy());
+    }
+    private void addShape(IShape s){
+        push();
+        scene.addShape(s);
+    }
+    private void moveSelected(int dx,int dy){
+        push();
+        scene.moveSelected(dx,dy);
+    }
+    private void setColorSelected(Color color){
+        push();
+        scene.setColorSelected(color);
+    }
     
     private void initializeMouseListener()
     {
@@ -80,16 +98,16 @@ public class DrawShapes extends JFrame
                 
                 if (e.getButton()==MouseEvent.BUTTON1) { 
                     if (shapeType == ShapeType.SQUARE) {
-                        scene.addShape(new Square(color, 
+                        addShape(new Square(color, 
                                 e.getX(), 
                                 e.getY(),
                                 100));
                     } else if (shapeType == ShapeType.CIRCLE){
-                        scene.addShape(new Circle(color,
+                        addShape(new Circle(color,
                                 e.getPoint(),
                                 100));
                     } else if (shapeType == ShapeType.RECTANGLE) {
-                        scene.addShape(new Rectangle(
+                        addShape(new Rectangle(
                                 e.getPoint(),
                                 100, 
                                 200,
@@ -181,6 +199,7 @@ public class DrawShapes extends JFrame
                     File selectedFile = jfc.getSelectedFile();
                     System.out.println("load from " +selectedFile.getAbsolutePath());
                     try{
+                        push();
                         scene.loadFromFile(selectedFile);
                         repaint();
                     }
@@ -343,7 +362,7 @@ public class DrawShapes extends JFrame
             public void actionPerformed(ActionEvent e) {
                 String text=e.getActionCommand();
                 System.out.println(text);
-                scene.setColorSelected(Color.RED);
+                setColorSelected(Color.RED);
                 repaint();
             }
         });
@@ -355,7 +374,7 @@ public class DrawShapes extends JFrame
             public void actionPerformed(ActionEvent e) {
                 String text=e.getActionCommand();
                 System.out.println(text);
-                scene.setColorSelected(Color.BLUE);
+                setColorSelected(Color.BLUE);
                 repaint();
             }
         });
@@ -367,7 +386,7 @@ public class DrawShapes extends JFrame
             public void actionPerformed(ActionEvent e) {
                 String text=e.getActionCommand();
                 System.out.println(text);
-                scene.setColorSelected(Color.GREEN);
+                setColorSelected(Color.GREEN);
                 repaint();
             }
         });
@@ -397,25 +416,36 @@ public class DrawShapes extends JFrame
                 e.getKeyCode();
                 char k =e.getKeyChar();
                 if(k=='w'){
-                    scene.moveSelected(0, -distance);
+                    moveSelected(0, -distance);
                 }
                 if(k=='a'){
-                    scene.moveSelected(-distance, 0);
+                    moveSelected(-distance, 0);
                 }
                 if(k=='s'){
-                    scene.moveSelected(0, distance);
+                    moveSelected(0, distance);
                 }
                 if(k=='d'){
-                    scene.moveSelected(distance, 0);
+                    moveSelected(distance, 0);
                 }
                 if(k=='+'){
+                    push();
                     scene.scaleUpSelected();
                 }
                 if(k=='-'){
+                    push();
                     scene.scaleDownSelected();
                 }
                 if(k=='r'){
+                    push();
                     scene.deleteSelected();
+                }
+                if(k=='z'){
+                    if (undoStack.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Nothing to undo!", "Undo Error", JOptionPane.WARNING_MESSAGE);
+                    } else {
+                        Scene oldscene = undoStack.pop();
+                        scene.reload(oldscene);
+                    }
                 }
                 repaint();
 

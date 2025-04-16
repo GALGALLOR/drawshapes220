@@ -244,5 +244,15 @@ public class Scene implements Iterable<IShape>
             }
         }
     }
+    public Scene copy(){
+        Scene copy = new Scene();
+        for(IShape s: shapeList){
+            copy.addShape(s.copy());
+        }
+        return copy;
+    }
+    public void reload(Scene other){
+        this.shapeList = other.shapeList;
+    }
     
 }

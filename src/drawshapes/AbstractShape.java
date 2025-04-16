@@ -106,9 +106,4 @@ public abstract class AbstractShape implements IShape
         throw new UnsupportedOperationException("not implemented yet");
     }
     
-    public void delete(){
-        //delete bounding box
-        //delete anchorpoint
-    }
-
 }

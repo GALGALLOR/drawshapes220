@@ -52,5 +52,8 @@ public class Circle extends AbstractShape
         diameter = (int) (diameter * 0.75);
         setBoundingBox(anchorPoint.x-diameter/2, anchorPoint.x+diameter/2, anchorPoint.y-diameter/2, anchorPoint.y+diameter/2);
     }
+    public IShape copy(){
+        return new Circle(color, new Point(anchorPoint.x,anchorPoint.y), diameter);
+    }
 
 }

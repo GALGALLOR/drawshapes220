@@ -70,6 +70,10 @@ public class Rectangle extends AbstractShape
         width = (int) (width* 0.75);
         setBoundingBox(anchorPoint.x-width/2, anchorPoint.x+width/2, anchorPoint.y-height/2, anchorPoint.y+height/2);
     }
+    public IShape copy(){
+        return new Rectangle(new Point(anchorPoint.x, anchorPoint.y),
+        width, height, color);
+    }
     
 
 }
